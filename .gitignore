@@ -1,4 +1,9 @@
 .eggs
 .tox
 *.egg-info
-env/
+*.pyc
+*.pyo
+/env/
+/build/
+/dist/
+__pycache__
