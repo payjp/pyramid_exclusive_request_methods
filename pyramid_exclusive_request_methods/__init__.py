@@ -46,7 +46,7 @@ def find_existing_views(registry, route_name, context, name):
             )
         if view is not None:
             if view_type is IMultiView:
-                return [view for view, _, _ in view.views]
+                return [_view for _, _view, _ in view.views]
             else:
                 return [view]
     return []
