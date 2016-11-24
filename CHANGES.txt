@@ -26,3 +26,8 @@ Changelog
 --------------------
 
 - Fix a bug that it doesn't work with view_defaults.
+
+0.0.5
+--------------------
+
+- Fix a bug that it doesn't work when the views forms a multiview.
