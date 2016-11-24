@@ -16,3 +16,8 @@ Changelog
 --------------------
 
 - Bump due to the packaging failure.
+
+0.0.3
+--------------------
+
+- Fix a bug that it doesn't work with view classes.
