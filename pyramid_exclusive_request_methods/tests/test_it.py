@@ -1,6 +1,7 @@
 import unittest
 from pyramid.config import Configurator
 from pyramid.response import Response
+from pyramid.view import view_defaults
 from webtest import TestApp
         
 from .. import exclusive_view_config
@@ -11,11 +12,12 @@ def test_view0(context, request):
     return Response(text=u'HEY')
 
 
+@view_defaults(route_name='test2')
 class test_view_class(object):
     def __init__(self, context, request):
         pass
 
-    @exclusive_view_config(route_name='test2', request_method=['POST'])
+    @exclusive_view_config(request_method=['POST'])
     def post(self):
         return Response(text=u'HEY')
 
