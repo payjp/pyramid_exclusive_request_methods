@@ -21,3 +21,8 @@ Changelog
 --------------------
 
 - Fix a bug that it doesn't work with view classes.
+
+0.0.4
+--------------------
+
+- Fix a bug that it doesn't work with view_defaults.
