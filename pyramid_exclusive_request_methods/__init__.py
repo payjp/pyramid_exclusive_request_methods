@@ -9,16 +9,11 @@ from pyramid.interfaces import IRequest, IRouteRequest, IView, IViewClassifier, 
 from pyramid.view import view_config
 
 
-class ViewWrapper(object):
-    def __init__(self, view, route_name, context, name):
-        self.view = view
+class Info(object):
+    def __init__(self, route_name, context, name):
         self.route_name = route_name
         self.context = context
         self.name = name
-        self.__name__ = getattr(view, '__name__')
-
-    def __call__(self, context, request):
-        return self.view(context, request)
 
 
 class ExclusiveView(object):
@@ -73,9 +68,9 @@ def exclusive_request_method_view_deriver(view, info):
             request_method_pred = pred
             break
     if request_method_pred is not None:
-        original_view = info.original_view
-        if isinstance(original_view, ViewWrapper):
-            old_view = find_existing_exclusive_view(info.registry, original_view.route_name, original_view.context, original_view.name)
+        extra_info = getattr(info.original_view, '__pyramid_exclusive_request_methods__', None)
+        if extra_info is not None:
+            old_view = find_existing_exclusive_view(info.registry, extra_info.route_name, extra_info.context, extra_info.name)
             if old_view is None:
                 request_methods = request_method_pred.val
                 info.predicates.remove(request_method_pred)
@@ -111,8 +106,9 @@ def add_exclusive_view(
         check_csrf=None,
         require_csrf=None,
         **view_options):
+    setattr(view, '__pyramid_exclusive_request_methods__', Info(route_name, context, name))
     config.add_view(
-        ViewWrapper(view, route_name, context, name),
+        view,
         name,
         for_,
         permission,

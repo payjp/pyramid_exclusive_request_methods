@@ -11,6 +11,15 @@ def test_view0(context, request):
     return Response(text=u'HEY')
 
 
+class test_view_class(object):
+    def __init__(self, context, request):
+        pass
+
+    @exclusive_view_config(route_name='test2', request_method=['POST'])
+    def post(self):
+        return Response(text=u'HEY')
+
+
 class BasicTest(unittest.TestCase):
 
     def test_it(self):
@@ -55,6 +64,7 @@ class BasicTest(unittest.TestCase):
         c = Configurator(package=__name__)
         c.include('pyramid_exclusive_request_methods')
         c.add_route('test1', '/1')
+        c.add_route('test2', '/2')
 
         c.scan(__name__)
         c.add_exclusive_view(test_view1, route_name='test1', request_method=['POST'])
@@ -73,3 +83,7 @@ class BasicTest(unittest.TestCase):
         resp = t.options('/1', status=405)
         self.assertEquals(resp.status_int, 405)
 
+        resp = t.post('/2')
+        self.assertEquals(resp.text, u'HEY')
+        resp = t.get('/2', status=405)
+        self.assertEquals(resp.status_int, 405)
