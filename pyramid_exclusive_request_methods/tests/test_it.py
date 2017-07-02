@@ -21,6 +21,10 @@ class test_view_class(object):
     def post(self):
         return Response(text=u'HEY')
 
+    @exclusive_view_config(request_method=['DELETE'])
+    def delete(self):
+        return Response(text=u'DEL')
+
 
 class BasicTest(unittest.TestCase):
 
@@ -87,5 +91,9 @@ class BasicTest(unittest.TestCase):
 
         resp = t.post('/2')
         self.assertEquals(resp.text, u'HEY')
+        resp = t.delete('/2')
+        self.assertEquals(resp.text, u'DEL')
         resp = t.get('/2', status=405)
+        self.assertEquals(resp.status_int, 405)
+        resp = t.put('/2', status=405)
         self.assertEquals(resp.status_int, 405)
