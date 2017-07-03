@@ -57,7 +57,7 @@ def find_existing_views(registry, route_name, context, name):
 
 
 def find_existing_exclusive_view(registry, route_name, context, name):
-    views = find_existing_views(registry, route_name, context, name) 
+    views = find_existing_views(registry, route_name, context, name)
     for view in views:
         while view is not None:
             if isinstance(view, ExclusiveView):
@@ -73,7 +73,11 @@ def exclusive_request_method_view_deriver(view, info):
             request_method_pred = pred
             break
     if request_method_pred is not None:
-        extra_info = getattr(info.original_view, '__pyramid_exclusive_request_methods__', None)
+        extra_info = None
+        extra_info_set = getattr(info.original_view, '__pyramid_exclusive_request_methods__', None)
+        if extra_info_set is not None:
+            attr = info.options['attr']
+            extra_info = extra_info_set.get(attr)
         if extra_info is not None:
             old_view = find_existing_exclusive_view(info.registry, extra_info.route_name, extra_info.context, extra_info.name)
             if old_view is None:
@@ -162,8 +166,11 @@ def add_exclusive_view(
         view_options['check_csrf'] = check_csrf
     if require_csrf is not Unspecified:
         view_options['require_csrf'] = require_csrf
-    extra_info = viewdefaults(lambda _, **kwargs: Info(**kwargs))(config, **view_options)
-    setattr(view, '__pyramid_exclusive_request_methods__', extra_info)
+    extra_info_set = getattr(view, '__pyramid_exclusive_request_methods__', None)
+    if extra_info_set is None:
+        extra_info_set = {}
+        setattr(view, '__pyramid_exclusive_request_methods__', extra_info_set)
+    extra_info_set[attr if attr is not Unspecified else None] = viewdefaults(lambda _, **kwargs: Info(**kwargs))(config, **view_options)
     config.add_view(**view_options)
 
 

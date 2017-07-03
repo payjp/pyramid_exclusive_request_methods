@@ -31,3 +31,14 @@ Changelog
 --------------------
 
 - Fix a bug that it doesn't work when the views forms a multiview.
+
+0.0.6
+--------------------
+
+- Fix for Pyramid 1.8
+
+0.0.7
+--------------------
+
+- Fix a bug that it doesn't work when the different route is specified to each attribute of a view class in the view config. 
+

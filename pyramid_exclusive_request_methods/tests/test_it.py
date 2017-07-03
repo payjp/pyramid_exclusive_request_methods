@@ -97,3 +97,39 @@ class BasicTest(unittest.TestCase):
         self.assertEquals(resp.status_int, 405)
         resp = t.put('/2', status=405)
         self.assertEquals(resp.status_int, 405)
+
+    def test_it_combined(self):
+        c = Configurator(package=__name__)
+        c.include('pyramid_exclusive_request_methods')
+        class test_view_class_with_combined_routes(object):
+            def __init__(self, context, request):
+                pass
+
+            def get(self):
+                return Response(text=u'GET')
+
+            def post(self):
+                return Response(text=u'POST')
+
+            def delete(self):
+                return Response(text=u'DEL')
+
+        c.add_route('test3', '/3')
+        c.add_route('test4', '/4')
+        c.add_exclusive_view(test_view_class_with_combined_routes, attr='get', request_method=['GET'], route_name='test3')
+        c.add_exclusive_view(test_view_class_with_combined_routes, attr='post', request_method=['POST'], route_name='test3')
+        c.add_exclusive_view(test_view_class_with_combined_routes, attr='delete', request_method=['DELETE'], route_name='test4')
+
+        t = TestApp(c.make_wsgi_app())
+        resp = t.get('/3')
+        self.assertEquals(resp.status_int, 200)
+        self.assertEquals(resp.text, u'GET')
+
+        resp = t.post('/3')
+        self.assertEquals(resp.status_int, 200)
+        self.assertEquals(resp.text, u'POST')
+
+        resp = t.delete('/4')
+        self.assertEquals(resp.status_int, 200)
+        self.assertEquals(resp.text, u'DEL')
+
