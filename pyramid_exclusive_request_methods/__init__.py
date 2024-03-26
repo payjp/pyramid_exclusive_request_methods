@@ -1,17 +1,12 @@
 from zope.interface import implementedBy, Interface
 from zope.interface.interfaces import IInterface
-from pyramid.config.predicates import RequestMethodPredicate
-from pyramid.config.util import MAX_ORDER
-try:
-    from pyramid.util import as_sorted_tuple
-except ImportError:
-    from pyramid.config.util import as_sorted_tuple
-from pyramid.compat import string_types, text_type
+from pyramid.predicates import RequestMethodPredicate
+from pyramid.config.predicates import MAX_ORDER
 from pyramid.httpexceptions import HTTPMethodNotAllowed
-from pyramid.viewderivers import predicated_view, INGRESS
+from pyramid.viewderivers import INGRESS
 from pyramid.interfaces import IRequest, IRouteRequest, IView, IViewClassifier, ISecuredView, IMultiView
 from pyramid.view import view_config
-from pyramid.util import viewdefaults
+from pyramid.config.views import viewdefaults
 
 
 class Info(object):
